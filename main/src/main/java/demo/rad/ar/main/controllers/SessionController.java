@@ -9,6 +9,7 @@ import demo.rad.ar.main.services.SessionService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins="*")
 @RequestMapping("/api/sessions")
 public class SessionController {
     @Autowired
