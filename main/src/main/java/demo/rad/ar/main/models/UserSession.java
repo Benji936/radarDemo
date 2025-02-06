@@ -15,9 +15,6 @@ import java.time.LocalDateTime;
 @Setter
 public class UserSession {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
     String userId;
     LocalDateTime timestamp;
 
