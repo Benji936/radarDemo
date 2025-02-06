@@ -19,7 +19,7 @@
         },
     },
     async mounted() {
-        this.sessions = await getSessions();
+            this.sessions = await getSessions();
         },
     };
 </script>
