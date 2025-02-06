@@ -64,7 +64,7 @@ public class UserSession {
 
     // Time & Date
     String dayOfWeek;
-    String month;
+    String sessionMonth;
     Integer dayOfMonth;
     Integer sessionHour;
     String season;
