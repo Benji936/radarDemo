@@ -1,0 +1,12 @@
+package demo.rad.ar.main.repository;
+
+
+import demo.rad.ar.main.models.UserSession;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface SessionRepository extends JpaRepository<UserSession, Long> {
+
+    
+}
