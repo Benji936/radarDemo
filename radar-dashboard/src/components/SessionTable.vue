@@ -11,7 +11,7 @@
         />
     
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto mb-4">
             <table class="min-w-full border-collapse border border-gray-300">
             <thead class="bg-gray-100">
                 <tr>
@@ -35,6 +35,9 @@
             </tbody>
             </table>
         </div>
+
+        <div id="map" class="h-96"></div>
+        
     
         <div class="mt-4 flex justify-between">
             <button
@@ -56,33 +59,77 @@
     </template>
     
     <script>
+    import { ref } from "vue";
     import { getSessions } from "../api";
+    import L from "leaflet";
+    import "leaflet/dist/leaflet.css";
     
     export default {
         data() {
-        return {
-            sessions: [],
-            searchQuery: "",
-            page: 0,
-            totalPages: 1,
-        };
+            return {
+                sessions: [],
+                searchQuery: "",
+                page: 0,
+                totalPages: 1,
+                map: ref(null),
+                markersLayer: ref(null),
+            };
         },
         methods: {
-        async fetchSessions() {
+
+        async update(){
             const data = await getSessions(this.page, 10, this.searchQuery);
+
             this.sessions = data._embedded.userSessionList;
             this.totalPages = data.page.totalPages;
+
+            if (this.markersLayer) {
+                this.markersLayer.clearLayers(); // Remove old markers
+            } else {
+                this.markersLayer = L.layerGroup().addTo(this.map); // Create marker group if not exists
+            }
+
+            // Fetch user session data
+            data._embedded.userSessionList.forEach((session) => {
+                if (session.latitude && session.longitude) {
+                    const marker = L.marker([session.latitude, session.longitude])
+                    .bindPopup(
+                        `<b>User:</b> ${session.id}<br>
+                        <b>City:</b> ${session.city}<br>
+                        <b>Country:</b> ${session.country}<br>
+                        <b>Temperature:</b> ${session.temperature}°C`
+                    );
+                    this.markersLayer.addLayer(marker)
+                }
+            });
+        },
+
+        async fetchSessions() {
+            const data = await getSessions(this.page, 10, this.searchQuery);
+
+            this.sessions = data._embedded.userSessionList;
+            this.totalPages = data.page.totalPages;
+
+            
+            this.map = L.map("map").setView([20, 0], 2); // Default view (world map)
+    
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            }).addTo(this.map);
+
+            await this.update()
+            
         },
         nextPage() {
             if (this.page < this.totalPages - 1) {
             this.page++;
-            this.fetchSessions();
+            this.update();
             }
         },
         prevPage() {
             if (this.page > 0) {
             this.page--;
-            this.fetchSessions();
+            this.update();
             }
         },
         },

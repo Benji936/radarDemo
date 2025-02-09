@@ -9,7 +9,7 @@
     import { defineComponent, onMounted, ref } from "vue";
     import L from "leaflet";
     import "leaflet/dist/leaflet.css";
-    import { getAllSessions } from "../api";
+    import { getSessions } from "../api";
     
     export default defineComponent({
         setup() {
@@ -23,13 +23,13 @@
             }).addTo(map.value);
     
             // Fetch user session data
-            const sessions = await getAllSessions(0, 50); // Load only first 50 sessions
-            sessions.forEach((session) => {
+            const sessions = await getSessions(0, 50); // Load only first 50 sessions
+            sessions._embedded.userSessionList.forEach((session) => {
             if (session.latitude && session.longitude) {
                 L.marker([session.latitude, session.longitude])
                 .addTo(map.value)
                 .bindPopup(
-                    `<b>User:</b> ${session.userId}<br>
+                    `<b>User:</b> ${session.id}<br>
                     <b>City:</b> ${session.city}<br>
                     <b>Country:</b> ${session.country}<br>
                     <b>Temperature:</b> ${session.temperature}°C`
