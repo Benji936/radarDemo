@@ -1,6 +1,8 @@
 package demo.rad.ar.main.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import demo.rad.ar.main.models.UserSession;
@@ -19,5 +21,13 @@ public class SessionService {
 
     public UserSession saveSession(UserSession session) {
         return sessionRepository.save(session);
+    }
+
+    public Page<UserSession> getSessions(int page, int size, String search) {
+        PageRequest pageable = PageRequest.of(page, size);
+        if (search != null && !search.isEmpty()) {
+            return sessionRepository.searchSessions(search, pageable);
+        }
+        return sessionRepository.findAll(pageable);
     }
 }

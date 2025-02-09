@@ -9,7 +9,7 @@
     <script>
     import { defineComponent, ref, onMounted } from "vue";
     import BaseChart from "./BaseChart.vue";
-    import { getSessions } from "../api";
+    import { getAllSessions } from "../api";
     
     export default defineComponent({
         components: { BaseChart },
@@ -22,7 +22,7 @@
     
         onMounted(async () => {
             try {
-            const sessions = await getSessions();
+            const sessions = await getAllSessions();
     
             if (!sessions || sessions.length === 0) {
                 console.warn("No session data available.");

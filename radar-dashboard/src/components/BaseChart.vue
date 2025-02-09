@@ -1,19 +1,19 @@
     <template>
         <div>
-        <Bar v-if="chartDataReady" :data="chartData" :options="chartOptions" />
+        <PieChart v-if="chartDataReady" :data="chartData" :options="chartOptions" />
         <p v-else class="text-gray-500">Loading chart...</p>
         </div>
     </template>
     
     <script>
     import { defineComponent, ref, watch } from "vue";
-    import { Bar } from "vue-chartjs";
-    import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+    import { Bar, Pie } from "vue-chartjs";
+    import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
     
-    ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+    ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
     
     export default defineComponent({
-        components: { Bar },
+        components: { PieChart: Pie },
         props: {
         chartData: Object, // Expecting chartData as a prop
         },

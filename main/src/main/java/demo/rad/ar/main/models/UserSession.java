@@ -8,15 +8,20 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Setter
 public class UserSession {
+    
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Ensure ID is auto-generated
+    Long id;
+
     String userId;
-    LocalDateTime timestamp;
+    OffsetDateTime timestamp;
 
     // Device Info
     String deviceType;
