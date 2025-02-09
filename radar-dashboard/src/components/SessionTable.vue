@@ -4,18 +4,26 @@
         <!-- Search Input -->
         <input
             v-model="searchQuery"
-            @input="fetchSessions"
+            @input="update"
             type="text"
             placeholder="Search by browser, OS, city..."
-            class="border p-2 mb-4 w-full rounded-md"
+            class="border p-2 mb-4 w-full rounded-md object-left"
         />
+
+        <select @change="max" v-model="maxPageUser">
+            <option>5</option>
+            <option>10</option>
+            <option>20</option>
+            <option>50</option>
+            <option>100</option>
+        </select>
     
         <!-- Table -->
         <div class="overflow-x-auto mb-4">
             <table class="min-w-full border-collapse border border-gray-300">
             <thead class="bg-gray-100">
                 <tr>
-                <th class="text-left border p-2">User ID</th>
+                <th class="text-left p-2">User ID</th>
                 <th class="text-left border p-2">Device</th>
                 <th class="text-left border p-2">Browser</th>
                 <th class="text-left border p-2">OS</th>
@@ -48,6 +56,7 @@
             Previous
             </button>
             <span class="text-gray-700 ml-4 mr-4">Page {{ page + 1 }} of {{ totalPages }}</span>
+            
             <button
             @click="nextPage"
             :disabled="page >= totalPages - 1"
@@ -73,12 +82,13 @@
                 totalPages: 1,
                 map: ref(null),
                 markersLayer: ref(null),
+                maxPageUser: 10,
             };
         },
         methods: {
 
         async update(){
-            const data = await getSessions(this.page, 10, this.searchQuery);
+            const data = await getSessions(this.page, this.maxPageUser, this.searchQuery);
 
             this.sessions = data._embedded.userSessionList;
             this.totalPages = data.page.totalPages;
