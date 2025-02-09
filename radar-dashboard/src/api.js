@@ -25,3 +25,18 @@ export const getAllSessions = async() => {
     }
 
 }
+
+export const fetchLogo = async (searchValue) => {
+    try {
+    const response = await axios.get('https://api.logo.dev/search?q='+searchValue, {
+        headers: {
+        'Authorization': 'Bearer sk_ZqBKmUrVSsGbfWYTyrbssw'
+        }
+    });
+    
+    console.log(response.data); // Handle the response data
+    return response.data;
+    } catch (error) {
+    console.error('Error fetching logo:', error);
+    }
+};
