@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import SessionTable from "./components/SessionTable.vue";
-import SessionChart from "./components/SessionChart.vue";
-import UserMap from "./components/UserMap.vue";
+import SessionTable from "../components/SessionTable.vue";
+import SessionChart from "../components/SessionChart.vue";
+import UserMap from "../components/UserMap.vue";
 
 export default {
   components: { SessionTable, SessionChart, UserMap },
