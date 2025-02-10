@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +20,9 @@ public class UserSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Ensure ID is auto-generated
     Long id;
+
+    @Column(name = "user_segment")
+    Integer userSegment;
 
     @JsonProperty("user_id")
     String userId;

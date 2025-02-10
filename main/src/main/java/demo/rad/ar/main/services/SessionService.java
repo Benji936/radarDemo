@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import demo.rad.ar.main.models.UserSession;
 import demo.rad.ar.main.repository.SessionRepository;
@@ -29,5 +30,10 @@ public class SessionService {
             return sessionRepository.searchSessions(search, pageable);
         }
         return sessionRepository.findAll(pageable);
+    }
+
+    
+    public List<UserSession> findUsersBySegment(@PathVariable Integer segmentId) {
+        return sessionRepository.getUsersByUserSegment(segmentId);
     }
 }

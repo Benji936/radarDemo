@@ -1,10 +1,11 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/sessions";
+const API_SESSION_URL = "http://localhost:8080/api/sessions";
+const API_SEGMENTATION_URL = "http://localhost:8080/api/segmentation";
 
 export const getSessions = async (page = 0, size = 10, search = "") => {
     try {
-        const response = await axios.get(API_URL, {
+        const response = await axios.get(API_SESSION_URL, {
         params: { page, size, search },
         });
         return response.data;
@@ -17,13 +18,22 @@ export const getSessions = async (page = 0, size = 10, search = "") => {
 export const getAllSessions = async() => {
 
     try{
-        const response = await axios.get(API_URL+"/all");
+        const response = await axios.get(API_SESSION_URL+"/all");
         return response.data;
     }catch (error) {
         console.error("Error fetching sessions:", error);
         return { content: [] };
     }
+}
 
+export const runSegmentation = async() => {
+    try{
+        const response = await axios.post(API_SEGMENTATION_URL+"/run");
+        return response.data;
+    }catch(error){
+        console.error("Error fetching sessions:", error);
+        return { content: [] };
+    }
 }
 
 export const fetchLogo = async (searchValue) => {
@@ -34,7 +44,7 @@ export const fetchLogo = async (searchValue) => {
         }
     });
     
-    console.log(response.data); // Handle the response data
+    //console.log(response.data); // Handle the response data
     return response.data;
     } catch (error) {
     console.error('Error fetching logo:', error);

@@ -3,6 +3,8 @@ package demo.rad.ar.main.repository;
 
 import demo.rad.ar.main.models.UserSession;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +21,6 @@ public interface SessionRepository extends JpaRepository<UserSession, Long> {
             "LOWER(u.os) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(u.city) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<UserSession> searchSessions(@Param("search") String search, Pageable pageable);
+
+    public List<UserSession> getUsersByUserSegment(Integer segmentId);
 }

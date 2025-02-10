@@ -1,75 +1,75 @@
     <template>
-        <h2 class="text-2xl font-semibold mb-4">User Sessions</h2>
+        <div>
+            <h2 class="text-2xl font-semibold mb-4">User Sessions</h2>
     
-        <!-- Search Input -->
-        <input
-            v-model="searchQuery"
-            @input="update"
-            type="text"
-            placeholder="Search by browser, OS, city..."
-            class="border p-2 mb-4 w-full rounded-md object-left"
-        />
+            <!-- Search Input -->
+            <input
+                v-model="searchQuery"
+                @input="update"
+                type="text"
+                placeholder="Search by browser, OS, city..."
+                class="border p-2 mb-4 w-full rounded-md object-left"
+            />
 
-        <select @change="max" v-model="maxPageUser">
-            <option>5</option>
-            <option>10</option>
-            <option>20</option>
-            <option>50</option>
-            <option>100</option>
-        </select>
-    
-        <!-- Table -->
-        <div class="overflow-x-auto mb-4">
-            <table class="min-w-full border-collapse border border-gray-300">
-            <thead class="bg-gray-100">
-                <tr>
-                <th class="text-left p-2">User ID</th>
-                <th class="text-left border p-2">Device</th>
-                <th class="text-left border p-2">Browser</th>
-                <th class="text-left border p-2">OS</th>
-                <th class="text-left border p-2">City</th>
-                <th class="text-left border p-2">Temperature (°C)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="session in sessions" :key="session.id" class="hover:bg-gray-50">
-                <td class="border p-2">{{ session.id }}</td>
-                <td class="fixed top-0 right-0 left-0 border p-2">{{ session.device }}</td>
-                <td class="fixed top-0 right-0 left-0 border p-2">{{ session.browser }}</td>
-                <td class="border p-2">{{ session.os }}</td>
-                <td class="border p-2">{{ session.city }}</td>
-                <td class="border p-2">{{ session.temperature }}</td>
-                </tr>
-            </tbody>
-            </table>
-        </div>
+            <select @change="max" v-model="maxPageUser">
+                <option>5</option>
+                <option>10</option>
+                <option>20</option>
+                <option>50</option>
+                <option>100</option>
+            </select>
 
-        <div id="map" class="h-96"></div>
+            <button @click="run">Run Segmentation</button>
         
-    
-        <div class="mt-4 flex justify-between">
-            <button
-            @click="prevPage"
-            :disabled="page === 0"
-            class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-            >
-            Previous
-            </button>
-            <span class="text-gray-700 ml-4 mr-4">Page {{ page + 1 }} of {{ totalPages }}</span>
+            <!-- Table -->
+            <div class="overflow-x-auto mb-4">
+                <table class="min-w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-100">
+                    <tr>
+                    <th class="text-left p-2">User ID</th>
+                    <th class="text-left border p-2">Device</th>
+                    <th class="text-left border p-2">Browser</th>
+                    <th class="text-left border p-2">OS</th>
+                    <th class="text-left border p-2">City</th>
+                    <th class="text-left border p-2">Temperature (°C)</th>
+                    <th class="text-left border p-2">Segment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="session in sessions" :key="session.id" class="hover:bg-gray-50">
+                    <td class="border p-2">{{ session.id }}</td>
+                    <td class="border p-2">{{ session.device_brand }}</td>
+                    <td class="border p-2">{{ session.browser }}</td>
+                    <td class="border p-2">{{ session.os }}</td>
+                    <td class="border p-2">{{ session.city }}</td>
+                    <td class="border p-2">{{ session.temperature }}</td>
+                    <td class="border p-2">{{ session.user_segment }}</td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+
+            <div id="map" class="h-96"></div>
             
-            <button
-            @click="nextPage"
-            :disabled="page >= totalPages - 1"
-            class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-            >
-            Next
-            </button>
+        
+            <div class="flex justify-between h-100">
+                <button @click="prevPage" :disabled="page === 0" class="px-4 py-2 mx-5 bg-gray-300 rounded disabled:opacity-50">
+                Previous
+                </button>
+
+                <span class="text-gray-700 ml-4 mr-4">Page {{ page + 1 }} of {{ totalPages }}</span>
+                
+                <button @click="nextPage" :disabled="page >= totalPages - 1" class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">
+                Next
+                </button>
+            </div>
         </div>
+        
     </template>
     
     <script>
     import { ref } from "vue";
-    import { getSessions } from "../api";
+    import { runSegmentation, getSessions } from "../api";
     import L from "leaflet";
     import "leaflet/dist/leaflet.css";
     
@@ -86,6 +86,11 @@
             };
         },
         methods: {
+
+        async run(){
+            const response = await runSegmentation();
+            console.log(response);
+        },
 
         async update(){
             const data = await getSessions(this.page, this.maxPageUser, this.searchQuery);

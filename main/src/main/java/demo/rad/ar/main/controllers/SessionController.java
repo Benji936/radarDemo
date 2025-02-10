@@ -42,5 +42,11 @@ public class SessionController {
         Page<UserSession> resultPage = sessionService.getSessions(page, size, search);
         return ResponseEntity.ok(assembler.toModel(resultPage));
     }
+
+    @GetMapping("/segments/{segmentId}")
+    public List<UserSession> getSegment(@PathVariable Integer segmentId) {
+        return sessionService.findUsersBySegment(segmentId);
+    }
+
     
 }
