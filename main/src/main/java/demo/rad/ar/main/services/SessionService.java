@@ -24,16 +24,28 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-    public Page<UserSession> getSessions(int page, int size, String search) {
+    public Page<UserSession> getSessions(int page, int size, String search, Integer segment) {
         PageRequest pageable = PageRequest.of(page, size);
+
+        if (segment != null) {
+            System.out.println("---- By Segment ----");
+            return sessionRepository.getSessionsByUserSegment(segment, pageable);
+            
+        }
+
         if (search != null && !search.isEmpty()) {
+            System.out.println("---- By Search ----");
             return sessionRepository.searchSessions(search, pageable);
         }
+
+        System.out.println("---- All ----");
+        System.out.println(segment);
+        System.out.println(search);
         return sessionRepository.findAll(pageable);
     }
 
     
-    public List<UserSession> findUsersBySegment(@PathVariable Integer segmentId) {
-        return sessionRepository.getUsersByUserSegment(segmentId);
-    }
+    /*public Page<UserSession> findSessionsBySegment(@PathVariable Integer segmentId) {
+        return sessionRepository.getSessionsByUserSegment(segmentId);
+    }*/
 }

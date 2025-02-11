@@ -37,16 +37,15 @@ public class SessionController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer segment,
             PagedResourcesAssembler<UserSession> assembler) {
 
-        Page<UserSession> resultPage = sessionService.getSessions(page, size, search);
+        Page<UserSession> resultPage = sessionService.getSessions(page, size, search, segment);
         return ResponseEntity.ok(assembler.toModel(resultPage));
     }
 
-    @GetMapping("/segments/{segmentId}")
+    /*@GetMapping("/segments/{segmentId}")
     public List<UserSession> getSegment(@PathVariable Integer segmentId) {
-        return sessionService.findUsersBySegment(segmentId);
-    }
-
-    
+        return sessionService.findSessionsBySegment(segmentId);
+    }*/
 }

@@ -22,5 +22,6 @@ public interface SessionRepository extends JpaRepository<UserSession, Long> {
             "LOWER(u.city) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<UserSession> searchSessions(@Param("search") String search, Pageable pageable);
 
-    public List<UserSession> getUsersByUserSegment(Integer segmentId);
+    @Query("SELECT u FROM UserSession u WHERE u.userSegment=:segment")
+    Page<UserSession> getSessionsByUserSegment(@Param("segment") Integer segment, Pageable pageable);
 }

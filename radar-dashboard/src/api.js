@@ -15,6 +15,20 @@ export const getSessions = async (page = 0, size = 10, search = "") => {
     }
 };
 
+
+export const getSegment = async (page = 0, size = 10, segment = 0) => {
+    try {
+        const response = await axios.get(API_SESSION_URL, {
+        params: { page, size, segment },
+        });
+        console.log(response)
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching sessions:", error);
+        return { content: [], totalPages: 1 };
+    }
+};
+
 export const getAllSessions = async() => {
 
     try{
