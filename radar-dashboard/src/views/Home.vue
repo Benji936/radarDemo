@@ -1,8 +1,16 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-6">
-    <h1 class="text-3xl font-bold mb-6 text-center">User Sessions Dashboard</h1>
+    <h1 class="text-3xl font-bold mb-6 text-center">Demo</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <SessionTable />
+      
+      <nav style="display: flex; flex-direction: row; gap: 24px;">
+        <router-link to="/k-mean">K-mean</router-link>
+        <router-link to="/sessions">sessions</router-link>
+      </nav>
+      
+      <RouterView/>
+      <!--<SessionTable />-->
+
       <!-- <UserMap/>-->
       <!--<SessionChart />-->
     </div>
@@ -10,13 +18,32 @@
 </template>
 
 <script>
-import SessionTable from "../components/SessionTable.vue";
-import SessionChart from "../components/SessionChart.vue";
-import UserMap from "../components/UserMap.vue";
+  import SessionTable from "../components/SessionTable.vue";
+  import SessionChart from "../components/SessionChart.vue";
+  import UserMap from "../components/UserMap.vue";
+  import { useMainStore } from '@/stores/main';
+import { ref } from 'vue';
 
-export default {
-  components: { SessionTable, SessionChart, UserMap },
-};
+  export default {
+    data(){
+      return {
+        store: ref(null),
+        message: ref("")
+      }
+    },
+    components: { SessionTable, SessionChart, UserMap },
+
+    methods: {
+      mounted() {
+        console.log("Bonjour")
+        //this.store = useMainStore();
+      },
+    },
+  };
+
+  
+
+  
 </script>
 
 

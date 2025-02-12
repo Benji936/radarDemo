@@ -12,7 +12,7 @@
                 style="padding: 10px; border-radius: 10px;"
                 />
 
-                <select v-model="maxPageUser" style="padding: 10px; border-radius: 10px;">
+                <select @change="update" v-model="maxPageUser" style="padding: 10px; border-radius: 10px;">
                     <option>5</option>
                     <option>10</option>
                     <option>20</option>
@@ -20,13 +20,28 @@
                     <option>100</option>
                 </select>
 
-                <select @change="updateSegment" v-model="segment"  style="padding: 10px; border-radius: 10px;">
-                    <option value="0">Segment 0</option>
-                    <option value="1">Segment 1</option>
-                    <option value="2">Segment 2</option>
+                <select v-show="store.clusters != null" v-for="n in store.clusters" :key="n" @change="update" v-model="segment"  style="padding: 10px; border-radius: 10px;">
+                    <option value="0">Cluster 0</option>
+                    <option value="1">Cluster 1</option>
+                    <option value="2">Cluster 2</option>
+                    <option value="3">Cluster 3</option>
+                    <option value="4">Cluster 4</option>
+                    <option value="5">Cluster 5</option>
+                    <option value="6">Cluster 6</option>
                 </select>
+            </div>
 
-                <button @click="run">Run Segmentation</button>
+            <div class="flex justify-between h-100" style="display: flex; flex-direction: row; justify-content: space-between;">
+                <button @click="prevPage" :disabled="page === 0" class="px-4 py-2 mx-5 bg-gray-300 rounded disabled:opacity-50">
+                Previous
+                </button>
+
+                <span class="text-gray-700 ml-4 mr-4">Around {{ totalPages*maxPageUser}}</span>
+                <span class="text-gray-700 ml-4 mr-4">Page {{ page + 1 }} of {{ totalPages }}</span>
+                
+                <button @click="nextPage" :disabled="page >= totalPages - 1" class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">
+                Next
+                </button>
             </div>
 
             <div id="map" class="h-96"></div>
@@ -34,6 +49,8 @@
             <div class="overflow-x-auto mb-4">
                 <table class="min-w-full border-collapse border border-gray-300">
                 <thead class="bg-gray-100">
+                    <!--<tr v-for="(value,key) in sessions[0]" v-bind:key="key" style="display: flex; flex-direction: row;">
+                        <th>{{ key }}</th>-->
                     <tr>
                         <th class="text-left p-2">User ID</th>
                         <th class="text-left border p-2">Device</th>
@@ -55,6 +72,7 @@
                         <td class="border p-2">{{ session.city }}</td>
                         <td class="border p-2">{{ session.temperature }}</td>
                         <td class="border p-2">{{ session.userSegment }}</td>
+                        <td class="border p-2">{{ session.day_of_week }}</td>
                     </tr>
                 </tbody>
                 </table>
@@ -63,23 +81,14 @@
             
             
         
-            <div class="flex justify-between h-100" style="display: flex; flex-direction: row; justify-content: space-between;">
-                <button @click="prevPage" :disabled="page === 0" class="px-4 py-2 mx-5 bg-gray-300 rounded disabled:opacity-50">
-                Previous
-                </button>
-
-                <span class="text-gray-700 ml-4 mr-4">Page {{ page + 1 }} of {{ totalPages }}</span>
-                
-                <button @click="nextPage" :disabled="page >= totalPages - 1" class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">
-                Next
-                </button>
-            </div>
+            
         </div>
         
     </template>
     
     <script>
     import { ref } from "vue";
+    import { useMainStore } from '@/stores/main';
     import { runSegmentation, getSessions, getSegment } from "../api";
     import L from "leaflet";
     import "leaflet/dist/leaflet.css";
@@ -87,6 +96,7 @@
     export default {
         data() {
             return {
+                store: useMainStore(),
                 sessions: [],
                 searchQuery: "",
                 page: 0,
@@ -94,7 +104,7 @@
                 map: ref(null),
                 markersLayer: ref(null),
                 maxPageUser: 10,
-                segment: 0,
+                segment: null,
             };
         },
         methods: {
@@ -132,7 +142,14 @@
         },
 
         async update(){
-            const data = await getSessions(this.page, this.maxPageUser, this.searchQuery);
+
+            let data = null;
+            if(this.segment != null){
+                data = await getSegment(this.page, this.maxPageUser, this.segment);
+            }else{
+                data = await getSessions(this.page, this.maxPageUser, this.searchQuery);
+            }
+            
 
             this.sessions = data._embedded.userSessionList;
             this.totalPages = data.page.totalPages;
