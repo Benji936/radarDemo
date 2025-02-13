@@ -1,29 +1,34 @@
     <template>
-        <div class="p-6 bg-white shadow-lg rounded-lg">
-        <h2 class="text-2xl font-semibold mb-4">Dynamic User Segmentation</h2>
+        <div class="p-6 bg-white shadow-lg rounded-lg" style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
 
-        <h4>{{ store.message }}</h4>
-    
-        <!-- Select Attributes -->
-        <label class="block font-medium">Select Attributes:</label>
-        <div class="flex flex-wrap">
-            <label v-for="attr in availableAttributes" :key="attr" class="mr-4">
-            <input type="checkbox" :value="attr" v-model="selectedAttributes" class="mr-1">
-            {{ attr }}
-            </label>
-        </div>
-    
-        <!-- Choose Cluster Count -->
-        <label class="block font-medium mt-4">Number of Clusters:</label>
-        <input type="number" v-model="numClusters" min="2" max="10" class="border p-2 mb-4 w-24">
-    
-        <!-- Run Segmentation -->
-        <button @update="updateStore" @click="runSegmentation" class="bg-blue-500 text-white px-4 py-2 rounded">
-            Run Segmentation
-        </button>
-    
-        <!-- Show Response -->
-        <p v-if="message" class="mt-4 text-green-600">{{ message }}</p>
+            <h4>{{ store.message }}</h4>
+
+            <!-- Choose Cluster Count -->
+            <label class="block font-medium mt-4" style="text-align: left;">Number of Clusters:</label>
+            <input type="number" v-model="numClusters" min="2" max="10" class="border p-2 mb-4 w-24" style="width: 200px; padding: 10px; border-radius: 10px;">
+        
+            <!-- Select Attributes -->
+            <label class="block font-medium" style="text-align: left;">Select Attributes:</label>
+            <div  style="display:flex; flex-direction: row; flex-wrap: wrap; gap: 48px;">
+                <div v-for="(attributes,Family) in allAttributes" v-bind:key="Family" class="flex flex-wrap" style="display: flex; flex-direction: column; align-items: baseline; ">
+                    <p style="margin-bottom: 16px;">{{Family}}</p>
+
+                    <label v-for="attr in attributes" :key="attr" class="mr-4">
+                        <input type="checkbox" @change="selected($event ,attr)" :checked="store.selectedAttributes.includes(attr)" class="mr-1">
+                        {{ attr }}
+                    </label>
+                </div>
+            </div>
+        
+            <!-- Run Segmentation -->
+            <button @update="updateStore" @click="runSegmentation" class="bg-blue-500 text-white px-4 py-2 rounded">
+                Run Segmentation
+            </button>
+
+            <button @click="store.clearAttributes()">Clear</button>
+
+            <p style="color: red;">{{ errorMessage }}</p>
+            <!--<p> {{ store.selectedAttributes }}</p>-->
         </div>
     </template>
     
@@ -31,48 +36,65 @@
     import axios from "axios";
     import { useMainStore } from '@/stores/main';
 
-
-    
-
-
     export default {
         data() {
             return {
-                availableAttributes: ["dayOfWeek", "sessionMonth", "dayOfMonth", "sessionHour", "isHoliday", "language", "device_brand", "referer_domain", "isCapital"],
-                selectedAttributes: [],
+                allAttributes:{
+                    "Time & Date": ["dayOfWeek","sessionMonth","dayOfMonth","sesionHour","season","isHolyday","holydayName"],
+                    "Referer": ["refererUrl","refererDomain","productId","StoreId","productTag"],
+                    "UTM Data": ["utmSource","utmMedium","utmCampaign","utmContent","utmTerm"],
+                    "Device": ["deviceType","deviceBrand","os","screenDimensions"],
+                    "Others": ["isDay","isTouchCapable","browser","language","networkSpeed"]
+                },
+                attrSelected: "",
                 numClusters: useMainStore().clusters,
                 store: useMainStore(),
+                errorMessage: "",
             };
         },
 
         methods: {
+
+            selected(event, selection){
+                if(event.target.checked && !this.store.selectedAttributes.includes(selection)){
+                    this.store.addAttribute(selection);
+                    
+                }else{
+                    console.log("filter")
+                    let index = this.store.selectedAttributes.indexOf(selection)
+                    if(index != -1){
+                        this.store.selectedAttributes.splice(index,1)
+                    }
+                }
+            },
+
             updateStoreClusters() {
-                store.updateClusters(this.numClusters)
+                this.store.updateClusters(this.numClusters)
             },
 
             updateStore() {
-                store.updateMessage(this.message);
+                this.store.updateMessage(this.message);
             },
 
             async runSegmentation() {
-                if (this.selectedAttributes.length === 0) {
-                    this.message = "Please select at least one attribute.";
+                if (this.store.selectedAttributes.length === 0) {
+                    this.errorMessage = "Please select at least one attribute.";
                     return;
                 }
         
                 try {
-                const response = await axios.post(
-                    `http://localhost:8080/api/segmentation/run?attributes=${this.selectedAttributes.join(",")}&clusters=${this.numClusters}`
-                );
-                    useMainStore().updateMessage(response.data);
+                    const response = await axios.post(
+                        `http://localhost:8080/api/segmentation/run?attributes=${this.store.selectedAttributes.join(",")}&clusters=${this.numClusters}`
+                    );
+                    this.store.updateMessage(response.data);
                 } catch (error) {
-                    this.message = "Error running segmentation.";
+                    this.errorMessage = "Error running segmentation.";
                     console.error(error);
                 }
             },
 
             mounted() {
-                
+
             },
         },
     };

@@ -1,8 +1,7 @@
     <template>
         <div  style="display:flex; flex-direction: column; gap: 48px; ">
-            <h2 class="text-2xl font-semibold mb-4">User Sessions</h2>
     
-            <div class="flex p-2" style="display:flex; flex-direction: row; gap: 24px; ">
+            <div class="flex p-2" style="display:flex; flex-direction: row; gap: 24px; margin-top: 24px;">
                 <input
                 v-model="searchQuery"
                 @input="update"
@@ -20,14 +19,9 @@
                     <option>100</option>
                 </select>
 
-                <select v-show="store.clusters != null" v-for="n in store.clusters" :key="n" @change="update" v-model="segment"  style="padding: 10px; border-radius: 10px;">
-                    <option value="0">Cluster 0</option>
-                    <option value="1">Cluster 1</option>
-                    <option value="2">Cluster 2</option>
-                    <option value="3">Cluster 3</option>
-                    <option value="4">Cluster 4</option>
-                    <option value="5">Cluster 5</option>
-                    <option value="6">Cluster 6</option>
+                <select default="Aucun" v-show="store.clusters != null" @change="update" v-model="segment"  style="padding: 10px; border-radius: 10px;">
+                    <option :value=null>Aucun</option>
+                    <option v-for="n in store.clusters" :key="n" :value="n-1">{{ n-1 }}</option>
                 </select>
             </div>
 
@@ -36,7 +30,7 @@
                 Previous
                 </button>
 
-                <span class="text-gray-700 ml-4 mr-4">Around {{ totalPages*maxPageUser}}</span>
+                <!--<span class="text-gray-700 ml-4 mr-4">Around {{ totalPages*maxPageUser}}</span>-->
                 <span class="text-gray-700 ml-4 mr-4">Page {{ page + 1 }} of {{ totalPages }}</span>
                 
                 <button @click="nextPage" :disabled="page >= totalPages - 1" class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">
@@ -46,33 +40,38 @@
 
             <div id="map" class="h-96"></div>
 
+
             <div class="overflow-x-auto mb-4">
-                <table class="min-w-full border-collapse border border-gray-300">
+                <table class="min-w-full border-collapse border border-gray-300" style="overflow:hidden;">
                 <thead class="bg-gray-100">
-                    <!--<tr v-for="(value,key) in sessions[0]" v-bind:key="key" style="display: flex; flex-direction: row;">
-                        <th>{{ key }}</th>-->
-                    <tr>
-                        <th class="text-left p-2">User ID</th>
-                        <th class="text-left border p-2">Device</th>
-                        <th class="text-left border p-2">Device Type</th>
-                        <th class="text-left border p-2">Browser</th>
-                        <th class="text-left border p-2">OS</th>
-                        <th class="text-left border p-2">City</th>
-                        <th class="text-left border p-2">Temperature (°C)</th>
-                        <th class="text-left border p-2">Segment</th>
+                    <tr style=" display: flex; text-align: left; gap: 24px; width: 80vw;">
+                        <!--<th v-for="(value,key) in sessions[0]" v-bind:key="key"  style="width: 150px; height: 100px;">{{ key }}</th>-->
+                        <th class="text-left border p-2" style="width: 150px; height: 100px;">Device</th>
+                        <th class="text-left border p-2" style="width: 150px; height: 100px;">Browser</th>
+                        <th class="text-left border p-2" style="width: 150px; height: 100px;">OS</th>
+                        <th class="text-left border p-2" style="width: 150px; height: 100px;">City</th>
+                        <th class="text-left border p-2" style="width: 150px; height: 100px;  margin-right:50px;">
+                            <select default="day_of_week" style="padding: 10px; border-radius: 10px;" v-model="specialKey">
+                                <option :value=key v-for="(value,key) in sessions[0]" v-bind:key="key">{{ key }}</option>
+                            </select>
+                        </th>
+
+                        <th class="text-left border p-2" style="width: 150px; height: 100px;">
+                            <select default="day_of_week" style="padding: 10px; border-radius: 10px;" v-model="specialKey2">
+                                <option :value=key v-for="(value,key) in sessions[0]" v-bind:key="key">{{ key }}</option>
+                            </select>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="session in sessions" :key="session.id" class="hover:bg-gray-50">
-                        <td class="border p-2">{{ session.id }}</td>
-                        <td class="border p-2">{{ session.device_brand }}</td>
-                        <td class="border p-2">{{ session.device_type }}</td>
-                        <td class="border p-2">{{ session.browser }}</td>
-                        <td class="border p-2">{{ session.os }}</td>
-                        <td class="border p-2">{{ session.city }}</td>
-                        <td class="border p-2">{{ session.temperature }}</td>
-                        <td class="border p-2">{{ session.userSegment }}</td>
-                        <td class="border p-2">{{ session.day_of_week }}</td>
+                    <tr v-for="session in sessions" :key="session.id" class="hover:bg-gray-50" style=" display: flex; text-align: left; gap: 24px; width: 80vw;">
+                        <!--<td v-show="store.selectedAttributes.includes(key)" v-for="(value,key) in session" :key="key" class="border p-2">{{ value }}</td>-->
+                        <td class="border p-2" style="width: 150px; height: 100px;">{{ session.device_brand }}</td>
+                        <td class="border p-2" style="width: 150px; height: 100px;">{{ session.browser }}</td>
+                        <td class="border p-2" style="width: 150px; height: 100px;">{{ session.os }}</td>
+                        <td class="border p-2" style="width: 150px; height: 100px;">{{ session.city }}</td>
+                        <td class="border p-2" style="width: 150px; height: 100px; margin-right:50px;">{{ session[specialKey] }}</td>
+                        <td class="border p-2" style="width: 150px; height: 100px;">{{ session[specialKey2] }}</td>
                     </tr>
                 </tbody>
                 </table>
@@ -105,6 +104,8 @@
                 markersLayer: ref(null),
                 maxPageUser: 10,
                 segment: null,
+                specialKey: "day_of_week",
+                specialKey2: "day_of_month",
             };
         },
         methods: {
