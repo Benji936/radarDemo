@@ -20,6 +20,12 @@
 	<developers>
 		<developer/>
 	</developers>
+	<repositories>
+		<repository>
+			<id>mahout</id>
+			<url>https://mvnrepository.com/artifact</url>
+		</repository>
+	</repositories>
 	<scm>
 		<connection/>
 		<developerConnection/>
@@ -30,13 +36,31 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_2.12</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<!-- Spark MLlib (Machine Learning) -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-mllib_2.12</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<!-- Spark SQL (for working with dataframes) -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-sql_2.12</artifactId>
+			<version>3.4.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.github.haifengl</groupId>
 			<artifactId>smile-core</artifactId>
 			<version>2.6.0</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -8,10 +8,15 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import demo.rad.ar.main.AIModel;
 import demo.rad.ar.main.models.UserSession;
 import demo.rad.ar.main.services.SessionService;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin()
@@ -48,4 +53,26 @@ public class SessionController {
     public List<UserSession> getSegment(@PathVariable Integer segmentId) {
         return sessionService.findSessionsBySegment(segmentId);
     }*/
+
+
+    @GetMapping("/recommendations/{sessionId}")
+    public ResponseEntity<Map<String, String>> getRecommendations(@PathVariable Long sessionId) {
+        AIModel model = new AIModel();
+        
+        Optional<UserSession> optionalSession = sessionService.getSessionById(sessionId);
+        
+        if (!optionalSession.isPresent()) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Session not found"));
+        }
+
+        UserSession session = optionalSession.get();
+        String predictedProduct = model.predictProduct(session);
+
+        Map<String, String> recommendations = new HashMap<>();
+        recommendations.put("productId", predictedProduct);
+        recommendations.put("storeId", "S1"); // Placeholder for now
+
+        return ResponseEntity.ok(recommendations);
+}
+
 }
