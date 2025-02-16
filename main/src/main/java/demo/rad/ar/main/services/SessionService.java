@@ -1,17 +1,31 @@
 package demo.rad.ar.main.services;
 
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+
 import demo.rad.ar.main.models.UserSession;
 import demo.rad.ar.main.repository.SessionRepository;
+import smile.data.DataFrame;
+import smile.data.Tuple;
+import smile.data.formula.Formula;
+import smile.data.vector.DoubleVector;
+import smile.classification.RandomForest;
+import smile.io.*;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -51,22 +65,71 @@ public class SessionService {
         return sessionRepository.findAll(pageable);
     }
 
-    private static final SparkSession spark = SparkSession.builder()
-        .appName("UserSessionRecommendation")
-        .master("local[*]")  // Run Spark locally
-        .getOrCreate();
-
-    public SparkSession getSparkSession() {
-        return spark;
+    private RandomForest model;
+    private static final String MODEL_PATH = "session_model.rf";
+    private Map<String, Integer> categoricalEncoding = new HashMap<>();
+    private Map<Integer, String> productIdDecoding = new HashMap<>();
+    
+    public void trainModel() {
+        List<UserSession> sessions = sessionRepository.findAll();
+        
+        if (sessions.isEmpty()) {
+            System.out.println("No data available for training.");
+            return;
+        }
+        
+        int[][] features = new int[sessions.size()][];
+        String[] labels = new String[sessions.size()];
+        
+        for (int i = 0; i < sessions.size(); i++) {
+            UserSession session = sessions.get(i);
+            features[i] = extractFeatures(session);
+            
+            String productId = session.getProductId();
+            labels[i] = productId;
+        }
+        
+        DataFrame df = DataFrame.of(features,"City","DayOfWeek","Device","Browser","DeviceBrand","Language","DayOfMonth","productId");
+        model = RandomForest.fit(Formula.lhs("productId"),df);
+        
+        try {
+            Write.object(model, Paths.get(MODEL_PATH));
+            System.out.println("Model saved successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public String predict(UserSession session) {
+        if (model == null) {
+            try {
+                model = (RandomForest) Read.object(Paths.get(MODEL_PATH));
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        
+        int[] features = extractFeatures(session);
+        DataFrame predictionData = DataFrame.of(new int[][]{features});
+        int predictedIndex = model.predict(predictionData)[0];
+        return productIdDecoding.getOrDefault(predictedIndex, "Unknown");
+    }
+    
+    private int[] extractFeatures(UserSession session) {
+        return new int[]{
+            encodeCategorical(session.getCity()),
+            encodeCategorical(session.getDayOfWeek()),
+            encodeCategorical(session.getDevice()),
+            encodeCategorical(session.getBrowser()),
+            encodeCategorical(session.getDeviceBrand()),
+            encodeCategorical(session.getLanguage()),
+            session.getDayOfMonth(),
+            encodeCategorical(session.getProductId()),
+        };
     }
 
-    public Dataset<Row> loadUserSessionData() {
-        List<UserSession> sessions = sessionRepository.findAll();
-    
-        // Convert list to DataFrame
-        Dataset<Row> sessionDF = spark.createDataFrame(sessions, UserSession.class);
-        sessionDF.show(); // Debugging: Show first few rows
-    
-        return sessionDF;
+    private int encodeCategorical(String value) {
+        return value == null ? -1 : value.hashCode();
     }
 }

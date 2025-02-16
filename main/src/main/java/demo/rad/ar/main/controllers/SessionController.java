@@ -2,13 +2,13 @@ package demo.rad.ar.main.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import demo.rad.ar.main.AIModel;
 import demo.rad.ar.main.models.UserSession;
 import demo.rad.ar.main.services.SessionService;
 
@@ -25,11 +25,19 @@ public class SessionController {
 
     @Autowired
     private SessionService sessionService;
+    //private AIService aIService;
 
     @CrossOrigin()
     @GetMapping("/all")
     public List<UserSession> getAllSessions() {
         return sessionService.getAllSessions();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserSession> getSessionById(@PathVariable Long id) {
+        Optional<UserSession> session = sessionService.getSessionById(id);
+        return session.map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -49,30 +57,27 @@ public class SessionController {
         return ResponseEntity.ok(assembler.toModel(resultPage));
     }
 
-    /*@GetMapping("/segments/{segmentId}")
-    public List<UserSession> getSegment(@PathVariable Integer segmentId) {
-        return sessionService.findSessionsBySegment(segmentId);
-    }*/
-
-
-    @GetMapping("/recommendations/{sessionId}")
-    public ResponseEntity<Map<String, String>> getRecommendations(@PathVariable Long sessionId) {
-        AIModel model = new AIModel();
-        
-        Optional<UserSession> optionalSession = sessionService.getSessionById(sessionId);
-        
-        if (!optionalSession.isPresent()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Session not found"));
+    @GetMapping("/train-model")
+    public ResponseEntity<String> trainModel() {
+        try{
+            sessionService.trainModel();
+            return ResponseEntity.ok("Training Done !");
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Errors: " + e.getMessage());
         }
+    }
 
-        UserSession session = optionalSession.get();
-        String predictedProduct = model.predictProduct(session);
-
-        Map<String, String> recommendations = new HashMap<>();
-        recommendations.put("productId", predictedProduct);
-        recommendations.put("storeId", "S1"); // Placeholder for now
-
-        return ResponseEntity.ok(recommendations);
-}
-
+    @GetMapping("/predict/{sessionsId}")
+    public ResponseEntity<String> predictProduct(@PathVariable long sessionId){
+        try{
+            UserSession userSession = sessionService.getSessionById(sessionId).get();
+            String prediction = sessionService.predict(userSession);
+            
+            return ResponseEntity.ok(prediction);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Errors: " + e.getMessage());
+        }
+    }
 }

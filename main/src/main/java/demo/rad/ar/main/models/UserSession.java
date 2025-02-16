@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Setter
-public class UserSession {
+public class UserSession implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Ensure ID is auto-generated
@@ -26,7 +27,7 @@ public class UserSession {
 
     @JsonProperty("user_id")
     String userId;
-    OffsetDateTime timestamp;
+    String timestamp;
 
     // Device Info
     @JsonProperty("device_type")

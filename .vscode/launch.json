@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MainApplication<main>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "demo.rad.ar.main.MainApplication",
+            "projectName": "main",
+            "vmArgs": "--add-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
