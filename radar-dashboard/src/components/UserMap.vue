@@ -25,16 +25,16 @@
             // Fetch user session data
             const sessions = await getSessions(0, 50); // Load only first 50 sessions
             sessions._embedded.userSessionList.forEach((session) => {
-            if (session.latitude && session.longitude) {
-                L.marker([session.latitude, session.longitude])
-                .addTo(map.value)
-                .bindPopup(
-                    `<b>User:</b> ${session.id}<br>
-                    <b>City:</b> ${session.city}<br>
-                    <b>Country:</b> ${session.country}<br>
-                    <b>Temperature:</b> ${session.temperature}°C`
-                );
-            }
+                if (session.latitude && session.longitude) {
+                    L.marker([session.latitude, session.longitude])
+                    .addTo(map.value)
+                    .bindPopup(
+                        `<b>User:</b> ${session.id}<br>
+                        <b>City:</b> ${session.city}<br>
+                        <b>Country:</b> ${session.country}<br>
+                        <b>Temperature:</b> ${session.temperature}°C`
+                    );
+                }
             });
         });
     

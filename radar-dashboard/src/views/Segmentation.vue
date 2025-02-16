@@ -86,6 +86,7 @@
                     const response = await axios.post(
                         `http://localhost:8080/api/segmentation/run?attributes=${this.store.selectedAttributes.join(",")}&clusters=${this.numClusters}`
                     );
+                    this.updateStoreClusters()
                     this.store.updateMessage(response.data);
                 } catch (error) {
                     this.errorMessage = "Error running segmentation.";

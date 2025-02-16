@@ -40,6 +40,15 @@ export const getAllSessions = async() => {
     }
 }
 
+export const getSessionById = async(sessionId) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/api/sessions/${sessionId}`);
+        return response.data;
+    } catch (err) {
+        return "Failed to load session data.";
+    }
+}
+
 export const runSegmentation = async() => {
     try{
         const response = await axios.post(API_SEGMENTATION_URL+"/run");
