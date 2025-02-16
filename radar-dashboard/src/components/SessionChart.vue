@@ -1,7 +1,7 @@
     <template>
         <div class="p-6 bg-white shadow-lg rounded-lg">
             <h2 class="text-2xl font-semibold mb-4">Browser Usage</h2>
-            <BaseChart v-if="chartDataReady" :chartData="chartData" />
+            <BaseChart v-if="chartDataReady" type="bar" :chartData="chartData" />
             <p v-else class="text-gray-500">Loading chart data...</p>
         </div>
     </template>

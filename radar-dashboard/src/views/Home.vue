@@ -9,19 +9,11 @@
       </nav>
       
       <RouterView/>
-      <!--<SessionTable />-->
-
-      <!-- <UserMap/>-->
-      <!--<SessionChart />-->
     </div>
   </div>
 </template>
 
 <script>
-  import SessionTable from "../components/SessionTable.vue";
-  import SessionChart from "../components/SessionChart.vue";
-  import UserMap from "../components/UserMap.vue";
-  import { useMainStore } from '@/stores/main';
 import { ref } from 'vue';
 
   export default {
@@ -31,7 +23,6 @@ import { ref } from 'vue';
         message: ref("")
       }
     },
-    components: { SessionTable, SessionChart, UserMap },
 
     methods: {
       mounted() {
