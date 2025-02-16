@@ -2,7 +2,7 @@
         <div class="analytics-container">
     
         
-        <SessionChart style="width: 80vw;"/>
+        <SessionChart style="width: 50vw;"/>
     
         <button @click="$router.push('/sessions')" class="back-button">Back</button>
         </div>
@@ -36,12 +36,6 @@
         text-align: center;
         font-size: 18px;
         color: red;
-    }
-    
-    .chart-container {
-        margin-bottom: 30px;
-        padding: 20px;
-        border-radius: 8px;
     }
     
     .back-button {

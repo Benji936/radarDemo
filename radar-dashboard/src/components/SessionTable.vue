@@ -38,7 +38,7 @@
                 </button>
             </div>
 
-            <div id="map" class="h-96"></div>
+            <div id="map" class="h-96" style="height: 50vh;"></div>
 
 
             <div class="overflow-x-auto mb-4">

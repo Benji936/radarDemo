@@ -1,7 +1,13 @@
     <template>
         <div class="p-6 bg-white shadow-lg rounded-lg">
+            <select v-model="charType" style="padding: 10px; border-radius: 10px;">
+                    <option>bar</option>
+                    <option>pie</option>
+                    <option>line</option>
+                    <option>doughnut</option>
+                </select>
             <h2 class="text-2xl font-semibold mb-4">Browser Usage</h2>
-            <BaseChart v-if="chartDataReady" type="bar" :chartData="chartData" />
+            <BaseChart v-if="chartDataReady" :type="charType" :chartData="chartData" />
             <p v-else class="text-gray-500">Loading chart data...</p>
         </div>
     </template>
@@ -13,6 +19,11 @@
     
     export default defineComponent({
         components: { BaseChart },
+        data(){
+            return{
+                charType: "bar",
+            }
+        },
         setup() {
         const chartDataReady = ref(false);
         const chartData = ref({
