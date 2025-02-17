@@ -5,7 +5,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import demo.rad.ar.main.models.UserSession;
 import demo.rad.ar.main.repository.SessionRepository;
@@ -29,6 +29,16 @@ public class SessionService {
     @Cacheable("sessions")
     public List<UserSession> getAllSessions() {
         return sessionRepository.findAll();
+    }
+
+    @Transactional
+    public void saveAllSessions(List<UserSession> sessions) {
+        sessionRepository.saveAll(sessions);
+    }
+
+    @Cacheable("segmentable_sessions")
+    public List<UserSession> getAllSessionsFast() {
+        return sessionRepository.getAllSessionsForSegment();
     }
 
     public Optional<UserSession> getSessionById(long id){

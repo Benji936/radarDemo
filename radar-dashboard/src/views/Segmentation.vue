@@ -1,5 +1,5 @@
     <template>
-        <div class="p-6 bg-white shadow-lg rounded-lg" style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+        <div class="p-6 bg-white shadow-lg rounded-lg flex-column" style="padding: 24px; gap: 24px;">
 
             <h4>{{ store.message }}</h4>
 
@@ -9,8 +9,8 @@
         
             <!-- Select Attributes -->
             <label class="block font-medium" style="text-align: left;">Select Attributes:</label>
-            <div  style="display:flex; flex-direction: row; flex-wrap: wrap; gap: 48px;">
-                <div v-for="(attributes,Family) in allAttributes" v-bind:key="Family" class="flex flex-wrap" style="display: flex; flex-direction: column; align-items: baseline; ">
+            <div class="flex-row"  style=" gap: 48px;">
+                <div v-for="(attributes,Family) in allAttributes" v-bind:key="Family" class="flex-column" style="align-items: baseline; ">
                     <p style="margin-bottom: 16px;">{{Family}}</p>
 
                     <label v-for="attr in attributes" :key="attr" class="mr-4">
@@ -40,11 +40,10 @@
         data() {
             return {
                 allAttributes:{
-                    "Time & Date": ["dayOfWeek","sessionMonth","dayOfMonth","sesionHour","season","isHolyday","holydayName"],
-                    "Referer": ["refererUrl","refererDomain","productId","StoreId","productTag"],
-                    "UTM Data": ["utmSource","utmMedium","utmCampaign","utmContent","utmTerm"],
+                    "Time & Date": ["dayOfWeek","dayOfMonth","sesionHour","season","isHolyday"],
+                    "Referer": ["refererUrl","refererDomain","productId","productTag"],
                     "Device": ["deviceType","deviceBrand","os","screenDimensions"],
-                    "Others": ["isDay","isTouchCapable","browser","language","networkSpeed"]
+                    "Others": ["isDay","isTouchCapable","browser","language"]
                 },
                 attrSelected: "",
                 numClusters: useMainStore().clusters,
@@ -83,6 +82,7 @@
                 }
         
                 try {
+                    this.store.updateMessage("Loading...");
                     const response = await axios.post(
                         `http://localhost:8080/api/segmentation/run?attributes=${this.store.selectedAttributes.join(",")}&clusters=${this.numClusters}`
                     );

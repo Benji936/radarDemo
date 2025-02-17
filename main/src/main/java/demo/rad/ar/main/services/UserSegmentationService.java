@@ -13,10 +13,10 @@ import java.util.List;
 public class UserSegmentationService {
 
     @Autowired
-    private SessionRepository sessionRepository;
+    private SessionService sessionService;
 
     public void performSegmentation(List<String> selectedAttributes, int numClusters) {
-        List<UserSession> sessions = sessionRepository.findAll();
+        List<UserSession> sessions = sessionService.getAllSessions();
         if (sessions.isEmpty() || selectedAttributes.isEmpty()) {
             System.out.println("No session data or attributes selected for clustering.");
             return;
@@ -36,11 +36,15 @@ public class UserSegmentationService {
         // Apply K-Means clustering with a dynamic number of clusters
         KMeans kmeans = KMeans.fit(featureMatrix, numClusters);
 
+        
+
         // Update user segment in DB
         for (int i = 0; i < sessions.size(); i++) {
             sessions.get(i).setUserSegment(kmeans.y[i]);
-            sessionRepository.save(sessions.get(i));
+            //sessionRepository.save(sessions.get(i));
         }
+
+        sessionService.saveAllSessions(sessions);
 
         System.out.println("Dynamic user segmentation completed!");
     }
