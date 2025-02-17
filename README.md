@@ -6,12 +6,10 @@ This project is a **full-stack application** built with **Spring Boot (Java)** a
 ## 🛠️ Tech Stack
 ### **Backend (Spring Boot)**
 - **Spring Boot** – REST API development
-- **Spring Security & JWT** – Authentication & authorization
 - **Spring Data JPA** – Database interactions
 - **Hibernate** – ORM for entity management
-- **H2 / PostgreSQL / MySQL** – Database options
-- **Smile ML / Tribuo** – Machine Learning for recommendations
-- **Criteria API** – Dynamic queries for fetching user sessions
+- **H2** – Database options
+- **Smile ML** – Machine Learning for recommendations
 
 ### **Frontend (Vue.js)**
 - **Vue 3** – Reactive UI framework
@@ -20,3 +18,8 @@ This project is a **full-stack application** built with **Spring Boot (Java)** a
 - **Axios** – API calls
 - **Tailwind CSS** – Styling framework
 
+### **Start the project**
+
+- Make sure you have maven and node.js installed on your computer
+- First of all in main run: mvn spring-boot:run
+- Then in radar-dashboard run : npm install & npm run dev
