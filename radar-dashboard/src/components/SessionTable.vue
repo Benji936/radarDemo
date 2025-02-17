@@ -45,7 +45,6 @@
                 <table class="min-w-full border-collapse border border-gray-300" style="overflow:hidden;">
                 <thead class="bg-gray-100">
                     <tr style=" display: flex; text-align: left; gap: 24px; width: 80vw;">
-                        <!--<th v-for="(value,key) in sessions[0]" v-bind:key="key"  style="width: 150px; height: 100px;">{{ key }}</th>-->
                         <th class="text-left border p-2" style="width: 150px; height: 100px;">Device</th>
                         <th class="text-left border p-2" style="width: 150px; height: 100px;">Browser</th>
                         <th class="text-left border p-2" style="width: 150px; height: 100px;">OS</th>
@@ -61,6 +60,7 @@
                                 <option :value=key v-for="(value,key) in sessions[0]" v-bind:key="key">{{ key }}</option>
                             </select>
                         </th>
+                        <th class="text-left border p-2" style="width: 150px; height: 100px;"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,6 +72,7 @@
                         <td class="border p-2" style="width: 150px; height: 100px;">{{ session.city }}</td>
                         <td class="border p-2" style="width: 150px; height: 100px; margin-right:50px;">{{ session[specialKey] }}</td>
                         <td class="border p-2" style="width: 150px; height: 100px;">{{ session[specialKey2] }}</td>
+                        <td class="border p-2" style="width: 150px; height: 100px;"><router-link :to="`/sessions/${session.id}`">more</router-link></td>
                     </tr>
                 </tbody>
                 </table>
@@ -135,7 +136,7 @@
                         `<b>User:</b> ${session.id}<br>
                         <b>City:</b> ${session.city}<br>
                         <b>Country:</b> ${session.country}<br>
-                        <b>Temperature:</b> ${session.temperature}°C`
+                        <b>Temperature:</b> ${session.temperature}°C<br>`
                     );
                     this.markersLayer.addLayer(marker)
                 }
@@ -169,7 +170,8 @@
                         `<b>User:</b> ${session.id}<br>
                         <b>City:</b> ${session.city}<br>
                         <b>Country:</b> ${session.country}<br>
-                        <b>Temperature:</b> ${session.temperature}°C`
+                        <b>Temperature:</b> ${session.temperature}°C<br>
+                        <a href="/sessions/${session.id}">more</a>`
                     );
                     this.markersLayer.addLayer(marker)
                 }

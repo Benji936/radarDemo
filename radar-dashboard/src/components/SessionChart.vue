@@ -1,6 +1,6 @@
     <template>
         <div class="p-6 bg-white shadow-lg rounded-lg">
-            <div >
+            <div style="display: flex; flex-direction: row; gap: 24px; margin-top: 24px;">
                 <select v-model="charType" style="padding: 10px; border-radius: 10px;">
                     <option>bar</option>
                     <option>pie</option>
@@ -42,9 +42,7 @@
             let specialKey = ref("day_of_week");
 
             const updateChart = () => {
-                console.log("non")
                 if (!sessions.value.length) return;
-                console.log("oui")
                 const dataCounts = {};
                 sessions.value.forEach((session) => {
                     if (session[specialKey.value]) {

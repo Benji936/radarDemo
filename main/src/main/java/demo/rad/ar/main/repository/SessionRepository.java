@@ -3,6 +3,9 @@ package demo.rad.ar.main.repository;
 
 import demo.rad.ar.main.models.UserSession;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

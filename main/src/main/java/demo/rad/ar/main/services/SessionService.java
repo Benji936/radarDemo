@@ -1,6 +1,7 @@
 package demo.rad.ar.main.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -9,20 +10,12 @@ import org.springframework.stereotype.Service;
 import demo.rad.ar.main.models.UserSession;
 import demo.rad.ar.main.repository.SessionRepository;
 import smile.data.DataFrame;
-import smile.data.Tuple;
 import smile.data.formula.Formula;
-import smile.data.vector.DoubleVector;
 import smile.classification.RandomForest;
 import smile.io.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +26,7 @@ public class SessionService {
     @Autowired
     private SessionRepository sessionRepository;
 
+    @Cacheable("sessions")
     public List<UserSession> getAllSessions() {
         return sessionRepository.findAll();
     }
@@ -67,7 +61,6 @@ public class SessionService {
 
     private RandomForest model;
     private static final String MODEL_PATH = "session_model.rf";
-    private Map<String, Integer> categoricalEncoding = new HashMap<>();
     private Map<Integer, String> productIdDecoding = new HashMap<>();
     
     public void trainModel() {

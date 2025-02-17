@@ -31,6 +31,7 @@
     </script>
     
     <style scoped>
+
     
     .loading, .error {
         text-align: center;

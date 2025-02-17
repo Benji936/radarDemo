@@ -6,6 +6,7 @@
       <nav style="display: flex; flex-direction: row; gap: 24px;">
         <router-link to="/sessions">Sessions</router-link>
         <router-link to="/k-mean">K-mean</router-link>
+        <router-link to="/sessions/analytics">Analytics</router-link>
       </nav>
       
       <RouterView/>
